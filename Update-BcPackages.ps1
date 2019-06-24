@@ -32,10 +32,13 @@ Param(
     $SyncMode = "Add"
     ,
     [switch]
-    $forceAppDataUpgrade
+    $ForceAppDataUpgrade
 )
 
-&"C:\Program Files\Microsoft Dynamics 365 Business Central\140\Service\NavAdminTool.ps1" | Out-Null
+$NavAdminTools = "C:\Program Files\*\*\Service\NavAdminTool.ps1"
+if(!(Test-Path -Path $NavAdminTools)) { throw "Unable to find: NavAdminTool" }
+$NavAdminTools = Resolve-Path $NavAdminTools
+&$NavAdminTools -ErrorAction Stop | Out-Null
 
 $apps = @()
 
@@ -86,7 +89,7 @@ $apps | % {
     $app = $_
     Write-Information " ✅ Sync $($app.Name) $($app.Version) with mode $SyncMode" -InformationAction Continue
     $app | Sync-NAVApp -ServerInstance $ServerInstance -Force -Mode $SyncMode
-    if ($prevVersions[$app.Name] -or $forceAppDataUpgrade) {
+    if ($prevVersions[$app.Name] -or $ForceAppDataUpgrade) {
         Write-Information " ✅ Starting data upgrade $($app.Name) $($app.Version)" -InformationAction Continue
         $app | Start-NAVAppDataUpgrade
     }
