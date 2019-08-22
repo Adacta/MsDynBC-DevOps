@@ -52,7 +52,7 @@ $PackagesToInstall | % {
             $appFiles | % {
                 $appFile = $_
                 Write-Information "Publishing $appFile" -InformationAction Continue
-                $app = Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile.FullName -Scope Tenant -PassThru -WarningAction SilentlyContinue
+                $app = Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile.FullName -Scope Tenant -Tenant default -PassThru -WarningAction SilentlyContinue
                 Write-Information " ✔ Published $($app.Name) $($app.Version)" -InformationAction Continue
 
                 $apps += $app
@@ -76,10 +76,10 @@ $allApps = Get-NAVAppInfo -ServerInstance $ServerInstance
         if ($appToUninstall.Version -ne $newApp.Version) {
             $prevVersions[$appToUninstall.Name] = $true
             Write-Information " 🗑 Uninstalling $($appToUninstall.Name) $($appToUninstall.Version)" -InformationAction Continue
-            $appToUninstall | Uninstall-NAVApp -Force -WarningAction SilentlyContinue
+            $appToUninstall | Uninstall-NAVApp -Tenant default -Force -WarningAction SilentlyContinue
             if ($SyncMode -eq "Add")
             {
-                $appToUninstall | Unpublish-NAVApp -WarningAction SilentlyContinue
+                $appToUninstall | Unpublish-NAVApp -Tenant default -WarningAction SilentlyContinue
             }
         }
     }
@@ -91,9 +91,9 @@ $apps | % {
     $app | Sync-NAVApp -ServerInstance $ServerInstance -Force -Mode $SyncMode
     if ($prevVersions[$app.Name] -or $ForceAppDataUpgrade) {
         Write-Information " ✅ Starting data upgrade $($app.Name) $($app.Version)" -InformationAction Continue
-        $app | Start-NAVAppDataUpgrade
+        $app | Start-NAVAppDataUpgrade -Tenant default
     }
 
     Write-Information " ✅ Installing $($app.Name) $($app.Version)" -InformationAction Continue
-    $app | Install-NAVApp -ServerInstance $ServerInstance -Force
+    $app | Install-NAVApp -ServerInstance $ServerInstance -Tenant default -Force
 }
