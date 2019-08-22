@@ -52,7 +52,7 @@ $PackagesToInstall | % {
             $appFiles | % {
                 $appFile = $_
                 Write-Information "Publishing $appFile" -InformationAction Continue
-                $app = Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile.FullName -PassThru -WarningAction SilentlyContinue
+                $app = Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile.FullName -Scope Tenant -PassThru -WarningAction SilentlyContinue
                 Write-Information " ✔ Published $($app.Name) $($app.Version)" -InformationAction Continue
 
                 $apps += $app
