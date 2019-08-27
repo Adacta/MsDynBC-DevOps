@@ -40,55 +40,68 @@ if(!(Test-Path -Path $NavAdminTools)) { throw "Unable to find: NavAdminTool" }
 $NavAdminTools = Resolve-Path $NavAdminTools
 &$NavAdminTools -ErrorAction Stop | Out-Null
 
-$apps = @()
-
-$PackagesToInstall | % {
-    $appTopDir = $_
-    $appDirs = Get-ChildItem -Recurse $appTopDir*
-    $appDirs | % {
-        $appDir = $_
-        $appFiles = Get-ChildItem $appDir\*.app
-        if ($appFiles -and $appFiles.Length) {
-            $appFiles | % {
-                $appFile = $_
-                Write-Information "Publishing $appFile" -InformationAction Continue
-                $app = Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile.FullName -Scope Tenant -Tenant default -PassThru -WarningAction SilentlyContinue
-                Write-Information " ✔ Published $($app.Name) $($app.Version)" -InformationAction Continue
-
-                $apps += $app
-            }
-        }
-        else {
-            Write-Warning "0 packages found for $app"
-        }
-    }
-}
+$install = $PackagesToInstall.Split(',')
+$uninstall = $install
+[array]::Reverse($uninstall)
 
 $prevVersions = @{}
-$allApps = Get-NAVAppInfo -ServerInstance $ServerInstance
-[System.Linq.Queryable]::Reverse([System.Linq.Queryable]::AsQueryable($apps)) | % {
-    $app = $_
-    $newApp = $allApps.Where({$_.Publisher -eq $app.Publisher -and $_.Name -eq $app.Name -and $_.Version -eq $app.Version}, "First")[0]
-    $appInfos = $allApps.Where({$_.AppId -eq $newApp.AppId})
-    
-    $appInfos | % {
-        $appToUninstall = $_
-        if ($appToUninstall.Version -ne $newApp.Version) {
-            $prevVersions[$appToUninstall.Name] = $true
-            Write-Information " 🗑 Uninstalling $($appToUninstall.Name) $($appToUninstall.Version)" -InformationAction Continue
-            $appToUninstall | Uninstall-NAVApp -Tenant default -Force -WarningAction SilentlyContinue
-            if ($SyncMode -eq "Add")
+
+# UN-INSTALL
+
+$uninstall |% {
+    $kw = $_
+    $appFile = Get-ChildItem -Path "$ContainerWorkFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    if(Test-Path -Path $appFile -PathType Leaf)
+    {
+        $appinfo = Get-NAVAppInfo -Path $appFile
+        $installedapps = Get-NAVAppInfo -ServerInstance $ServerInstance -Id $appinfo.AppId
+
+        $installedapps |% `
+        {
+            $appToUninstall = $_
+
+            if ($appToUninstall.Version -ne $appinfo.Version)
             {
-                $appToUninstall | Unpublish-NAVApp -Tenant default -WarningAction SilentlyContinue
+                $prevVersions[$appToUninstall.Name] = $true
+
+                Write-Information " 🗑 Uninstalling $($appToUninstall.Name) $($appToUninstall.Version)" -InformationAction Continue
+                $appToUninstall | Uninstall-NAVApp -Force -WarningAction SilentlyContinue
+                $appToUninstall | Unpublish-NAVApp -WarningAction SilentlyContinue
             }
         }
     }
 }
 
-$apps | % {
-    $app = $_
+# INSTALL
+
+$install |% `
+{
+    $kw = $_
+    $appFile = Get-ChildItem -Path "$ContainerWorkFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    if(Test-Path -Path $appFile -PathType Leaf)
+    {
+        $appinfo = Get-NAVAppInfo -Path $appFile
+        $installedapp = Get-NAVAppInfo -ServerInstance $ServerInstance -Id $appinfo.AppId -Version $appinfo.Version
+        if($installedapp -ne $null) { return }
+    
+        Write-Information "Publishing $appFile" -InformationAction Continue
+        $app = Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Tenant -Tenant default -PassThru -WarningAction SilentlyContinue
+        Write-Information " ✔ Published $($app.Name) $($app.Version)" -InformationAction Continue
+    }
+}
+
+# UPGRADE & PUBLISH
+
+$install |% `
+{
+    $kw = $_
+    $appFile = Get-ChildItem -Path "$ContainerWorkFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    $appinfo = Get-NAVAppInfo -Path $appFile
+    $app = Get-NAVAppInfo -ServerInstance $ServerInstance -Id $appinfo.AppId
+
     Write-Information " ✅ Sync $($app.Name) $($app.Version) with mode $SyncMode" -InformationAction Continue
     $app | Sync-NAVApp -ServerInstance $ServerInstance -Force -Mode $SyncMode
+
     if ($prevVersions[$app.Name] -or $ForceAppDataUpgrade) {
         Write-Information " ✅ Starting data upgrade $($app.Name) $($app.Version)" -InformationAction Continue
         $app | Start-NAVAppDataUpgrade -Tenant default
