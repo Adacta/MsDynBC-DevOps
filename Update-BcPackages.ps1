@@ -41,7 +41,7 @@ $NavAdminTools = Resolve-Path $NavAdminTools
 &$NavAdminTools -ErrorAction Stop | Out-Null
 
 $install = $PackagesToInstall.Split(',')
-$uninstall = $install
+$uninstall = $PackagesToInstall.Split(',')
 [array]::Reverse($uninstall)
 
 $prevVersions = @{}
@@ -60,7 +60,7 @@ $uninstall |% {
         {
             $appToUninstall = $_
 
-            if ($appToUninstall.Version -ne $appinfo.Version)
+            if ($appToUninstall.Version -ne $appinfo.Version -or $ForceAppDataUpgrade)
             {
                 $prevVersions[$appToUninstall.Name] = $true
 
