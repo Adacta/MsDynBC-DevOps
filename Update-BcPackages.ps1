@@ -21,10 +21,10 @@ Param(
     ,
     # Package folders in sequential order for publish. Unpublish order is reversed.
     [Parameter(Mandatory = $true)]
-    [ValidateCount(1, 999999)]
+    #[ValidateCount(1, 999999)]
     [ValidateNotNullOrEmpty()]
-    [string[]]
-    $PackagesToInstall = @()
+    [string]
+    $PackagesToInstall = ""
     ,
     # Database Sync Mode (Add, Clean, Development, ForceSync)
     [ValidateSet("Add", "Clean", "Development", "ForceSync")]
