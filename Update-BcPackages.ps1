@@ -40,7 +40,7 @@ Param(
     [switch]
     $ForceAppDataUpgrade
 )
-if(Test-Path -Path $AppPackagesFolder -PathType Container)
+if(!(Test-Path -Path $AppPackagesFolder -PathType Container))
 {
     Write-Error "unable to open AppPackagesFolder: '$AppPackagesFolder'"
     return
