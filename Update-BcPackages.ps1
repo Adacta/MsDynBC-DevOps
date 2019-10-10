@@ -35,10 +35,16 @@ Param(
     $ForceAppDataUpgrade
 )
 
-$NavAdminTools = "C:\Program Files\*\*\Service\NavAdminTool.ps1"
-if(!(Test-Path -Path $NavAdminTools)) { throw "Unable to find: NavAdminTool" }
-$NavAdminTools = Resolve-Path $NavAdminTools
-&$NavAdminTools -ErrorAction Stop | Out-Null
+if(!(Get-Module 'Microsoft.Dynamics.Nav.Management'))
+{
+    $serviceEntry = (Get-WmiObject win32_service |? { $_.Name -eq "MicrosoftDynamicsNavServer`$$ServerInstance" }).Pathname
+    $serviceExePath = $serviceEntry.Substring(0, $serviceEntry.IndexOf("Microsoft.Dynamics.Nav.Server.exe")).TrimStart('"')
+
+    $NavAdminTools = "$serviceExePath\NavAdminTool.ps1"
+    if(!(Test-Path -Path $NavAdminTools)) { throw "Unable to find: NavAdminTool" }
+    $NavAdminTools = Resolve-Path $NavAdminTools
+    &$NavAdminTools -ErrorAction Stop | Out-Null
+}
 
 $install = $PackagesToInstall.Split(',')
 $uninstall = $PackagesToInstall.Split(',')
