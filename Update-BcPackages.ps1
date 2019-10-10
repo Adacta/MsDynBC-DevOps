@@ -19,7 +19,13 @@ Param(
     [string]
     $ServerInstance
     ,
-    # Package folders in sequential order for publish. Unpublish order is reversed.
+    # Package folder
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [string]
+    $AppPackagesFolder = ""
+    ,
+    # Package names in sequential order for publish. Unpublish order is reversed.
     [Parameter(Mandatory = $true)]
     #[ValidateCount(1, 999999)]
     [ValidateNotNullOrEmpty()]
@@ -34,6 +40,11 @@ Param(
     [switch]
     $ForceAppDataUpgrade
 )
+if(Test-Path -Path $AppPackagesFolder -PathType Container)
+{
+    Write-Error "unable to open AppPackagesFolder: '$AppPackagesFolder'"
+    return
+}
 
 if(!(Get-Module 'Microsoft.Dynamics.Nav.Management'))
 {
@@ -56,7 +67,7 @@ $prevVersions = @{}
 
 $uninstall |% {
     $kw = $_
-    $appFile = Get-ChildItem -Path "$ContainerWorkFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
     if(Test-Path -Path $appFile -PathType Leaf)
     {
         $appinfo = Get-NAVAppInfo -Path $appFile
@@ -83,7 +94,7 @@ $uninstall |% {
 $install |% `
 {
     $kw = $_
-    $appFile = Get-ChildItem -Path "$ContainerWorkFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
     if(Test-Path -Path $appFile -PathType Leaf)
     {
         $appinfo = Get-NAVAppInfo -Path $appFile
@@ -101,7 +112,7 @@ $install |% `
 $install |% `
 {
     $kw = $_
-    $appFile = Get-ChildItem -Path "$ContainerWorkFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
     $appinfo = Get-NAVAppInfo -Path $appFile
     $app = Get-NAVAppInfo -ServerInstance $ServerInstance -Id $appinfo.AppId
 
