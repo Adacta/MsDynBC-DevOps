@@ -32,6 +32,9 @@ Param(
     [string]
     $PackagesToInstall = ""
     ,
+    [switch]
+    $SkipVerification = $false
+    ,
     # Database Sync Mode (Add, Clean, Development, ForceSync)
     [ValidateSet("Add", "Clean", "Development", "ForceSync")]
     [string]
@@ -102,7 +105,7 @@ $install |% `
         if($installedapp -ne $null) { return }
     
         Write-Information "Publishing $appFile" -InformationAction Continue
-        $app = Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Tenant -Tenant default -PassThru -WarningAction SilentlyContinue
+        $app = Publish-NAVApp -ServerInstance $ServerInstance -Path $appFile -Scope Tenant -Tenant default -PassThru -WarningAction SilentlyContinue -SkipVerification:$SkipVerification
         Write-Information " ✔ Published $($app.Name) $($app.Version)" -InformationAction Continue
     }
 }
