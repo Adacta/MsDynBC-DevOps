@@ -67,7 +67,7 @@ $prevVersions = @{}
 
 $uninstall |% {
     $kw = $_
-    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
     if(Test-Path -Path $appFile -PathType Leaf)
     {
         $appinfo = Get-NAVAppInfo -Path $appFile
@@ -94,7 +94,7 @@ $uninstall |% {
 $install |% `
 {
     $kw = $_
-    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
     if(Test-Path -Path $appFile -PathType Leaf)
     {
         $appinfo = Get-NAVAppInfo -Path $appFile
@@ -112,7 +112,7 @@ $install |% `
 $install |% `
 {
     $kw = $_
-    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
     $appinfo = Get-NAVAppInfo -Path $appFile
     $app = Get-NAVAppInfo -ServerInstance $ServerInstance -Id $appinfo.AppId
 
