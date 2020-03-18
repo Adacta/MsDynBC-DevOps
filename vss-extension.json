@@ -1,0 +1,76 @@
+{
+    "manifestVersion": 1,
+    "id": "msdynbc-devops",
+    "publisher": "adacta",
+    "version": "0.1.6",
+    "name": "DevOps for Microsoft Dynamics 365 Business Central by Adacta",
+    "description": "Microsoft Dynamics 365 Business Central tasks for Azure DevOps build and release pipeline.",
+    "public": false,
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "tags": [
+        "BC",
+        "NAV",
+        "deploy"
+    ],
+    "screenshots": [
+        {
+            "path": "screenshots/Update-BcPackages.png"
+        }
+    ],
+    "content": {
+        "details": {
+            "path": "readme.md"
+        },
+        "license": {
+            "path": "LICENSE.md"
+        }
+    },
+    "links": {
+        "home": {
+            "uri": "https://github.com/Adacta/MsDynBC-DevOps/"
+        },
+        "support": {
+            "uri": "https://github.com/Adacta/MsDynBC-DevOps/issues"
+        },
+        "getstarted": {
+            "uri": "https://github.com/Adacta/MsDynBC-DevOps/blob/master/README.md"
+        },
+        "repository": {
+            "uri": "https://github.com/Adacta/MsDynBC-DevOps/"
+        }
+    },
+    "contributions": [
+        {
+            "id": "update-BcPackages",
+            "type": "ms.vss-distributed-task.task",
+            "description": "Update BC (NAV) packages",
+            "targets": [
+                "ms.vss-distributed-task.task"
+            ],
+            "properties": {
+                "name": "update-BcPackages",
+                "title": "Update BC (NAV) packages"
+            }
+        }
+    ],
+    "files": [
+        {
+            "path": "Update-BcPackages"
+        },
+        {
+            "path": "screenshots",
+            "addressable": true
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/Adacta/MsDynBC-DevOps.git"
+    }
+}

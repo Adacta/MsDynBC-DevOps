@@ -1,0 +1,88 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "fcfcfabe-198f-41b9-b3f5-10ecd18457d0",
+    "name": "update-BcPackages",
+    "friendlyName": "Update BC (NAV) packages",
+    "description": "Update BC Server Instance to specified packages (v0.1.6)",
+    "helpMarkDown": "Update BC / NAV. [More information](https://github.com/Adacta/MsDynBC-DevOps/)",
+    "category": "Deploy",
+    "author": "Adacta d.o.o.",
+    "version": {
+        "Major": 0,
+        "Minor": 1,
+        "Patch": 6
+    },
+    "minimumAgentVersion": "1.95.1",
+    "instanceNameFormat": "Update server packages $(ServerInstance)",
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": false
+        }
+    ],
+    "showEnvironmentVariables": true,
+    "inputs": [
+        {
+            "name": "ServerInstance",
+            "type": "string",
+            "label": "Server Instance",
+            "defaultValue": "BC",
+            "required": true,
+            "helpMarkDown": "Specifies the name of a Dynamics Business Central Server instance like `BC`, `NAV` or custom name"
+        },
+        {
+            "name": "AppPackagesFolder",
+            "type": "filePath",
+            "label": "Package folder",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Path to the app packages"
+        },
+        {
+            "name": "PackagesToInstall",
+            "type": "multiLine",
+            "label": "Packages to install",
+            "required": true,
+            "helpMarkDown": "Package names in sequential order for publish. Unpublish order is reversed."
+        },
+        {
+            "name": "SyncMode",
+            "type": "pickList",
+            "options": {
+                "Add": "Add",
+                "Clean": "Clean",
+                "Development": "Development",
+                "ForceSync": "ForceSync"
+            },
+            "label": "Sync Mode",
+            "defaultValue": "Add",
+            "required": true,
+            "helpMarkDown": "Database Sync Mode (Add, Clean, Development, ForceSync)",
+            "groupName": "advanced"
+        },
+        {
+            "name": "ForceAppDataUpgrade",
+            "type": "boolean",
+            "label": "Force AppData Upgrade",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "Force AppData Upgrade",
+            "groupName": "advanced"
+        },
+        {
+            "name": "SkipVerification",
+            "type": "boolean",
+            "label": "Skip verification",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "Skip signed package verification",
+            "groupName": "advanced"
+        }
+    ],
+    "execution": {
+        "PowerShell3": {
+            "target": "Run-Update-BcPackages.ps1"
+        }
+    }
+}
