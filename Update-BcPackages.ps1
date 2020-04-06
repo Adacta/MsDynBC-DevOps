@@ -77,7 +77,7 @@ foreach($package in $packages)
     $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$package" } |% { $_.FullName }
 "2.1 debug: package: '$package'"
 "2.1 debug: appFile: '$appFile'"
-"2.1 debug: ("`$appFile" -eq '') == ("$appFile" -eq '') == {0}" -f ("$appFile" -eq '')
+"2.1 debug: ('`$appFile' -eq '') == ('$appFile' -eq '') == {0}" -f ("$appFile" -eq '')
     if("$appFile" -eq '')
     {
         Write-Error "Unable to find app file for: $package"
