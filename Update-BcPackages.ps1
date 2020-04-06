@@ -2,9 +2,10 @@
 ################################################################################################
 ################################################################################################
 
-# NOTE: there are TWO versions of this file!
+# NOTE: there are apprently THREE versions of this file!
 # LOCATION1: https://dev.azure.com/AD-NAV/ADL.BC.DEV/_git/DevOps?path=%2Fdevops%2FUpdate-BcPackages.ps1
-# LOCATION2: https://github.com/Adacta/MsDynBC-DevOps/blob/master/Update-BcPackages.ps1
+# LOCATION2: https://dev.azure.com/AD-NAV/ADL.BC.DEV/_git/MsDynBC-DevOps?path=%2FUpdate-BcPackages.ps1
+# LOCATION3: https://github.com/Adacta/MsDynBC-DevOps/blob/master/Update-BcPackages.ps1
 
 # NOTE: everyone should start using this version ( Devops / LOCATION1 )
 
