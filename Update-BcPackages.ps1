@@ -81,14 +81,14 @@ foreach($package in $packages)
     if("$appFile" -eq '')
     {
 "2.1 debug: Write-Error Unable to find app file for: $package"
-        Write-Error "Unable to find app file for: $package"
+        Write-Warning "Unable to find app file for: $package"
         continue
     }
 "2.1 debug: `$install += $package"
     $install += $package
 }
 
-"ActualPackagesToInstall: $PackagesToInstall"
+("ActualPackagesToInstall: {0}" -f ($install -join ','))
 
 $uninstall = $install.Clone()
 [array]::Reverse($uninstall)
