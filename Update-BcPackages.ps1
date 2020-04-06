@@ -74,7 +74,8 @@ $install = @()
 $packages = $PackagesToInstall.Split(',')
 foreach($package in $packages)
 {
-    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$package" } |% { $_.FullName }
+"2.1 debug: package: '$package'"
 "2.1 debug: appFile: '$appFile'"
     if("$appFile" -eq '')
     {
