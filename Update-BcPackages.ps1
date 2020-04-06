@@ -67,7 +67,21 @@ if(!(Get-Module 'Microsoft.Dynamics.Nav.Management'))
     &$NavAdminTools -ErrorAction Stop | Out-Null
 }
 
-$install = $PackagesToInstall.Split(',')
+"PackagesToInstall: $PackagesToInstall"
+
+$install = @()
+
+$packages = $PackagesToInstall.Split(',')
+foreach($package in $packages)
+{
+    $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+    if("$appFile" -eq '')
+    {
+        Write-Warning "Unable to find app file for: $package"
+    }
+    $install += $package
+}
+
 $uninstall = $PackagesToInstall.Split(',')
 [array]::Reverse($uninstall)
 
@@ -79,6 +93,7 @@ $uninstall |% {
     $kw = $_
     $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
 "3 debug: Test-Path -Path '$appFile'" #dbg ##################################################################################
+
     if(Test-Path -Path $appFile -PathType Leaf)
     {
         $appinfo = Get-NAVAppInfo -Path $appFile
