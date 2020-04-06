@@ -43,6 +43,11 @@ Param(
     [switch]
     $ForceAppDataUpgrade
 )
+if("$AppPackagesFolder" -eq '')
+{
+    Write-Error "AppPackagesFolder parameter not set!"
+    return
+}
 if(!(Test-Path -Path $AppPackagesFolder -PathType Container))
 {
     Write-Error "unable to open AppPackagesFolder: '$AppPackagesFolder'"
