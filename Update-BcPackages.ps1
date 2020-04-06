@@ -48,7 +48,7 @@ if("$AppPackagesFolder" -eq '')
     Write-Error "AppPackagesFolder parameter not set!"
     return
 }
-"debug: Test-Path -Path '$AppPackagesFolder'" #dbg ##################################################################################
+"1 debug: Test-Path -Path '$AppPackagesFolder'" #dbg ##################################################################################
 if(!(Test-Path -Path $AppPackagesFolder -PathType Container))
 {
     Write-Error "unable to open AppPackagesFolder: '$AppPackagesFolder'"
@@ -61,7 +61,7 @@ if(!(Get-Module 'Microsoft.Dynamics.Nav.Management'))
     $serviceExePath = $serviceEntry.Substring(0, $serviceEntry.IndexOf("Microsoft.Dynamics.Nav.Server.exe")).TrimStart('"')
 
     $NavAdminTools = "$serviceExePath\NavAdminTool.ps1"
-"debug: Test-Path -Path '$NavAdminTools'" #dbg ##################################################################################
+"2 debug: Test-Path -Path '$NavAdminTools'" #dbg ##################################################################################
     if(!(Test-Path -Path $NavAdminTools)) { throw "Unable to find: NavAdminTool" }
     $NavAdminTools = Resolve-Path $NavAdminTools
     &$NavAdminTools -ErrorAction Stop | Out-Null
@@ -78,7 +78,7 @@ $prevVersions = @{}
 $uninstall |% {
     $kw = $_
     $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
-"debug: Test-Path -Path '$appFile'" #dbg ##################################################################################
+"3 debug: Test-Path -Path '$appFile'" #dbg ##################################################################################
     if(Test-Path -Path $appFile -PathType Leaf)
     {
         $appinfo = Get-NAVAppInfo -Path $appFile
@@ -106,7 +106,7 @@ $install |% `
 {
     $kw = $_
     $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
-"debug: Test-Path -Path '$appFile'" #dbg ##################################################################################
+"4 debug: Test-Path -Path '$appFile'" #dbg ##################################################################################
     if(Test-Path -Path $appFile -PathType Leaf)
     {
         $appinfo = Get-NAVAppInfo -Path $appFile
@@ -125,6 +125,9 @@ $install |% `
 {
     $kw = $_
     $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+
+"5 debug: `$kw ( = '$kw' )" #dbg ##################################################################################
+"5 debug: Test-Path -Path `$appFile ( = '$appFile' )" #dbg ##################################################################################
     $appinfo = Get-NAVAppInfo -Path $appFile
     $app = Get-NAVAppInfo -ServerInstance $ServerInstance -Id $appinfo.AppId
 
