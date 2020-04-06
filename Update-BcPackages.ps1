@@ -67,7 +67,7 @@ if(!(Get-Module 'Microsoft.Dynamics.Nav.Management'))
     &$NavAdminTools -ErrorAction Stop | Out-Null
 }
 
-"PackagesToInstall: $PackagesToInstall"
+"DesiredPackagesToInstall: $PackagesToInstall"
 
 $install = @()
 
@@ -75,12 +75,16 @@ $packages = $PackagesToInstall.Split(',')
 foreach($package in $packages)
 {
     $appFile = Get-ChildItem -Path "$AppPackagesFolder" -Filter "*.app" -Recurse -File | Where-Object { $_.Directory -match "$kw" } |% { $_.FullName }
+"2.1 debug: appFile: '$appFile'"
     if("$appFile" -eq '')
     {
-        Write-Warning "Unable to find app file for: $package"
+        Write-Error "Unable to find app file for: $package"
+        continue
     }
     $install += $package
 }
+
+"ActualPackagesToInstall: $PackagesToInstall"
 
 $uninstall = $install.Clone()
 [array]::Reverse($uninstall)
