@@ -80,9 +80,11 @@ foreach($package in $packages)
 "2.1 debug: ('`$appFile' -eq '') == ('$appFile' -eq '') == {0}" -f ("$appFile" -eq '')
     if("$appFile" -eq '')
     {
+"2.1 debug: Write-Error Unable to find app file for: $package"
         Write-Error "Unable to find app file for: $package"
         continue
     }
+"2.1 debug: `$install += $package"
     $install += $package
 }
 
