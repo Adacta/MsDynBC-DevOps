@@ -82,7 +82,7 @@ foreach($package in $packages)
     $install += $package
 }
 
-$uninstall = $PackagesToInstall.Split(',')
+$uninstall = $install.Clone()
 [array]::Reverse($uninstall)
 
 $prevVersions = @{}
