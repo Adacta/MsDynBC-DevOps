@@ -137,7 +137,7 @@ $uninstall |% {
                 $prevVersions[$appToUninstall.Name] = $true
 
                 Write-Information " 🗑 Uninstalling $($appToUninstall.Name) $($appToUninstall.Version)" -InformationAction Continue
-                $appToUninstall | Uninstall-NAVApp -Force -WarningAction SilentlyContinue
+                $appToUninstall | Uninstall-NAVApp -Force -WarningAction SilentlyContinue -Tenant default
                 $appToUninstall | Unpublish-NAVApp -WarningAction SilentlyContinue
             }
         }
